@@ -8,4 +8,5 @@ class BuzzooleStrings {
   BuzzooleStrings._internal();
 
   String appTitle = 'Buzzole Movie App';
+  String bearerToken;
 }
