@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:buzzoole/data/models/auth.dart';
+import 'package:buzzoole/data/models/request_token.dart';
 import 'package:buzzoole/data/repositories/login_repository.dart';
 import 'package:buzzoole/utils/strings.dart';
 import 'package:meta/meta.dart';
@@ -26,9 +26,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     yield FetchingState();
     try {
       if (event is FetchingEvent) {
-        Auth _auth = await loginRepository.fetchBearerToken();
-        if (_auth != null) {
-          BuzzooleStrings().bearerToken = _auth.requestToken;
+        RequestToken _requestToken = await loginRepository.fetchRequestToken();
+        if (_requestToken != null) {
+          BuzzooleStrings().requestToken = _requestToken.requestToken;
+          print(BuzzooleStrings().requestToken);
           yield FetchedState();
         } else {
           yield FailedState();
