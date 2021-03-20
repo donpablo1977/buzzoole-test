@@ -10,17 +10,29 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  TextEditingController _usernameTEC;
+  TextEditingController _passwordTEC;
+
   @override
   void initState() {
     super.initState();
-    context.read<LoginBloc>().add(FetchingEvent());
+    _usernameTEC = TextEditingController();
+    _passwordTEC = TextEditingController();
+
+    context.read<LoginBloc>().add(TokenFetchingEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocConsumer<LoginBloc, LoginState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is LoginFetchedState) {
+            context.read<LoginBloc>().add(SessionFetchingEvent());
+          } else if (state is SessionFetchedState) {
+            Navigator.of(context).pushNamed('/movie_list');
+          }
+        },
         builder: (context, state) {
           if (state is FetchingState) {
             return Container(
@@ -29,11 +41,40 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Center(
                   child: CircularProgressIndicator(),
                 ));
-          } else if (state is FetchedState) {
+          } else if (state is TokenFetchedState) {
             return Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              color: Colors.greenAccent,
+              child: Column(
+                children: [
+                  SizedBox(height: 100),
+                  TextField(
+                    controller: _usernameTEC,
+                    obscureText: false,
+                  ),
+                  SizedBox(height: 100),
+                  TextField(
+                    controller: _passwordTEC,
+                    obscureText: true,
+                  ),
+                  SizedBox(height: 100),
+                  MaterialButton(
+                    color: Colors.redAccent,
+                    onPressed: () {
+                      context.read<LoginBloc>().add(LoginFetchingEvent(
+                          _usernameTEC.text, _passwordTEC.text));
+                    },
+                    elevation: 5,
+                    highlightElevation: 10,
+                    splashColor: Colors.white,
+                    highlightColor: Colors.redAccent.withAlpha(100),
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                    ),
+                  )
+                ],
+              ),
             );
           } else if (state is InitialState) {
             return Container(

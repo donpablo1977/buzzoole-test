@@ -7,6 +7,10 @@ class InitialState extends LoginState {}
 
 class FetchingState extends LoginState {}
 
-class FetchedState extends LoginState {}
+class TokenFetchedState extends LoginState {}
+
+class SessionFetchedState extends LoginState {}
+
+class LoginFetchedState extends LoginState {}
 
 class FailedState extends LoginState {}
