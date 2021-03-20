@@ -26,7 +26,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     try {
       Account _account = await accountRepository.fetchAccountDetails();
       if (_account != null) {
-        print(_account.name);
+        print(_account.username);
         yield FetchedState();
       }
     } catch (e) {

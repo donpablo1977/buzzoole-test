@@ -1,16 +1,56 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:buzzoole/data/models/movie.dart';
+import 'package:buzzoole/data/models/movie_detail.dart';
+import 'package:buzzoole/data/models/movie_images.dart';
+import 'package:buzzoole/data/models/movie_list.dart';
+import 'package:buzzoole/data/repositories/movies_repository.dart';
 import 'package:meta/meta.dart';
 
 part 'movies_event.dart';
 part 'movies_state.dart';
 
 class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
-  MoviesBloc() : super(MoviesInitial());
+  final MovieRepository movieRepository;
+  MoviesBloc(this.movieRepository) : super(MoviesInitial());
+
+  @override
+  void onTransition(Transition<MoviesEvent, MoviesState> transition) {
+    super.onTransition(transition);
+  }
 
   @override
   Stream<MoviesState> mapEventToState(
     MoviesEvent event,
-  ) async* {}
+  ) async* {
+    yield FetchingState();
+    if (event is TopRatedFetchingEvent) {
+      try {
+        MovieList _movieList =
+            await movieRepository.fetchPopularMovies(event.page);
+        if (_movieList.results.isNotEmpty) {
+          yield TopRatedFetchedState(_movieList.results);
+        } else {
+          yield FailedState();
+        }
+      } catch (e) {
+        yield FailedState();
+      }
+    } else if (event is DetailFetchingEvent) {
+      try {
+        MovieDetail _movieDetail =
+            await movieRepository.fetchMovieDetail(event.id);
+        MovieImages _movieImages =
+            await movieRepository.fetchMovieImages(event.id);
+        if (_movieDetail != null && _movieImages != null) {
+          yield DetailFetchedState(_movieDetail, _movieImages);
+        } else {
+          yield FailedState();
+        }
+      } catch (e) {
+        yield FailedState();
+      }
+    }
+  }
 }

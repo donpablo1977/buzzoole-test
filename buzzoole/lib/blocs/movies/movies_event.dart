@@ -3,7 +3,17 @@ part of 'movies_bloc.dart';
 @immutable
 abstract class MoviesEvent {}
 
-class FetchingEvent extends MoviesEvent {}
+class TopRatedFetchingEvent extends MoviesEvent {
+  final int page;
+
+  TopRatedFetchingEvent(this.page);
+}
+
+class DetailFetchingEvent extends MoviesEvent {
+  final int id;
+
+  DetailFetchingEvent(this.id);
+}
 
 class FetchedEvent extends MoviesEvent {}
 

@@ -10,4 +10,5 @@ class BuzzooleColors {
   BuzzooleColors._internal();
 
   Color buzzooleMainColor = Color.fromRGBO(138, 0, 166, 1);
+  Color buzzooleDarkGreyColor = Color.fromRGBO(50, 50, 50, 1);
 }
