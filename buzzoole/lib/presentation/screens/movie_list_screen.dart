@@ -1,4 +1,5 @@
 import 'package:buzzoole/blocs/movies/movies_bloc.dart';
+import 'package:buzzoole/data/models/movie.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_drawer.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_loader.dart';
 import 'package:buzzoole/presentation/widgets/index_indicator.dart';
@@ -18,13 +19,24 @@ class MovieListScreen extends StatefulWidget {
 
 class _MovieListScreenState extends State<MovieListScreen> {
   ScrollController _scrollController;
-  int page;
+  int _page;
+  List<Movie> _movies;
+  double _currentPixel;
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    page = 1;
-    context.read<MoviesBloc>().add(TopRatedFetchingEvent(page));
+    _movies = [];
+    _page = 1;
+    _currentPixel = 0;
+    context.read<MoviesBloc>().add(TopRatedFetchingEvent(_page));
   }
 
   @override
@@ -47,23 +59,20 @@ class _MovieListScreenState extends State<MovieListScreen> {
         child: BlocConsumer<MoviesBloc, MoviesState>(
           listener: (context, state) {
             if (state is TopRatedFetchedState) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  behavior: SnackBarBehavior.fixed,
-                  backgroundColor: Colors.white,
-                  duration: Duration(milliseconds: 1500),
-                  content: Container(
-                    alignment: Alignment.bottomCenter,
-                    height: MediaQuery.of(context).size.height / 20,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    child: Text(
-                      'YOU HAVE LOADED PAGE $page',
-                      textAlign: TextAlign.center,
-                      style: BuzzooleTextStyles().setBlackStyle(
-                          BuzzooleSizingEngine().setMinimumFontSize(context),
-                          BuzzooleColors().buzzooleMainColor),
-                    ),
-                  )));
+              for (var movie in state.movies) {
+                _movies.add(movie);
+              }
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (_currentPixel > 0) {
+                  _scrollController.jumpTo(
+                      _scrollController.position.pixels + _currentPixel);
+                  _scrollController.animateTo(
+                      _scrollController.position.pixels +
+                          MediaQuery.of(context).size.height / 6,
+                      duration: Duration(milliseconds: 1000),
+                      curve: Curves.fastOutSlowIn);
+                }
+              });
             }
           },
           builder: (context, state) {
@@ -77,16 +86,17 @@ class _MovieListScreenState extends State<MovieListScreen> {
                   if (scrollNotification is ScrollEndNotification) {
                     if (_scrollController.offset >=
                         scrollNotification.metrics.maxScrollExtent) {
-                      page = page + 1;
+                      _page = _page + 1;
                       context
                           .read<MoviesBloc>()
-                          .add(TopRatedFetchingEvent(page));
+                          .add(TopRatedFetchingEvent(_page));
+                      _currentPixel = scrollNotification.metrics.pixels;
                     } else if (_scrollController.offset <= 0) {
-                      if (page > 1) {
-                        page = page - 1;
+                      if (_page > 1) {
+                        _page = _page - 1;
                         context
                             .read<MoviesBloc>()
-                            .add(TopRatedFetchingEvent(page));
+                            .add(TopRatedFetchingEvent(_page));
                       }
                     }
                     return true;
@@ -95,7 +105,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
                 },
                 child: ListView.builder(
                     controller: _scrollController,
-                    itemCount: state.movies.length,
+                    itemCount: _movies.length,
                     itemBuilder: (context, index) {
                       return Row(
                         children: [
@@ -103,9 +113,9 @@ class _MovieListScreenState extends State<MovieListScreen> {
                           InkWell(
                               onTap: () {
                                 Navigator.of(context).pushNamed('/movie_detail',
-                                    arguments: {'id': state.movies[index].id});
+                                    arguments: {'id': _movies[index].id});
                               },
-                              child: MovieCard(movie: state.movies[index])),
+                              child: MovieCard(movie: _movies[index])),
                         ],
                       );
                     }),
