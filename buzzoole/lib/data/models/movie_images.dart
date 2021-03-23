@@ -8,13 +8,13 @@ class MovieImages {
   MovieImages.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     if (json['backdrops'] != null) {
-      backdrops = new List<Backdrops>();
+      backdrops = <Backdrops>[];
       json['backdrops'].forEach((v) {
         backdrops.add(new Backdrops.fromJson(v));
       });
     }
     if (json['posters'] != null) {
-      posters = new List<Posters>();
+      posters = <Posters>[];
       json['posters'].forEach((v) {
         posters.add(new Posters.fromJson(v));
       });

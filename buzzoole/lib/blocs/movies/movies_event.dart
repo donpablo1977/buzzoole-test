@@ -15,6 +15,12 @@ class DetailFetchingEvent extends MoviesEvent {
   DetailFetchingEvent(this.id);
 }
 
+class MovieCheckingEvent extends MoviesEvent {
+  final int id;
+
+  MovieCheckingEvent(this.id);
+}
+
 class FetchedEvent extends MoviesEvent {}
 
 class FailedEvent extends MoviesEvent {}

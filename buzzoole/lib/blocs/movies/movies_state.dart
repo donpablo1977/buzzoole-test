@@ -20,4 +20,9 @@ class DetailFetchedState extends MoviesState {
   DetailFetchedState(this.movieDetail, this.movieImages);
 }
 
+class MovieCheckedState extends MoviesState {
+  final bool watchListed;
+  MovieCheckedState(this.watchListed);
+}
+
 class FailedState extends MoviesState {}

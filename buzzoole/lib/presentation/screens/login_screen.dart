@@ -18,8 +18,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     _usernameTEC = TextEditingController();
     _passwordTEC = TextEditingController();
-
-    context.read<LoginBloc>().add(TokenFetchingEvent());
   }
 
   @override
@@ -41,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Center(
                   child: CircularProgressIndicator(),
                 ));
-          } else if (state is TokenFetchedState) {
+          } else if (state is InitialState) {
             return Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
@@ -76,18 +74,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
             );
-          } else if (state is InitialState) {
-            return Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              color: Colors.orangeAccent,
-            );
           }
-          return Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            color: Colors.redAccent,
-          );
+          return Container();
         },
       ),
     );

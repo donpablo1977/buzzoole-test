@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:buzzoole/data/models/auth.dart';
 import 'package:buzzoole/data/models/request_token.dart';
 import 'package:buzzoole/data/models/session.dart';
 import 'package:buzzoole/data/repositories/login_repository.dart';
@@ -35,11 +36,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           yield FailedState();
         }
       } else if (event is LoginFetchingEvent) {
-        RequestToken _requestToken =
+        Auth _auth =
             await loginRepository.sendLoginData(event.username, event.password);
-        if (_requestToken != null) {
-          BuzzooleStrings().requestToken = _requestToken.requestToken;
-          print("REQUEST TOKEN: " + BuzzooleStrings().requestToken);
+        if (_auth != null) {
+          BuzzooleStrings().requestToken = _auth.requestToken;
           yield LoginFetchedState();
         } else {
           yield FailedState();
@@ -47,8 +47,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       } else if (event is SessionFetchingEvent) {
         Session _session = await loginRepository.fetchSession();
         if (_session != null) {
-          BuzzooleStrings().sessionId = _session.sessionId;
-          print("SESSION ID: " + BuzzooleStrings().sessionId);
           yield SessionFetchedState();
         } else {
           yield FailedState();

@@ -2,6 +2,7 @@ import 'package:buzzoole/data/api/movies_api.dart';
 import 'package:buzzoole/data/models/movie_detail.dart';
 import 'package:buzzoole/data/models/movie_images.dart';
 import 'package:buzzoole/data/models/movie_list.dart';
+import 'package:buzzoole/utils/utils.dart';
 
 class MovieRepository {
   MovieAPI _movieAPI = MovieAPI();
@@ -16,5 +17,9 @@ class MovieRepository {
 
   Future<MovieImages> fetchMovieImages(int id) async {
     return _movieAPI.fetchMovieImages(id);
+  }
+
+  Future<bool> checkWatchlistedMovie(int id) async {
+    return BuzzooleUtils().checkMovieInWatchlist(id);
   }
 }

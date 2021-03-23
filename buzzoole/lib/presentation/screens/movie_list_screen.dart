@@ -1,6 +1,10 @@
 import 'package:buzzoole/blocs/movies/movies_bloc.dart';
+import 'package:buzzoole/presentation/widgets/buzzoole_drawer.dart';
 import 'package:buzzoole/presentation/widgets/index_indicator.dart';
 import 'package:buzzoole/presentation/widgets/movie_card.dart';
+import 'package:buzzoole/utils/colors.dart';
+import 'package:buzzoole/utils/size_engine.dart';
+import 'package:buzzoole/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,6 +29,16 @@ class _MovieListScreenState extends State<MovieListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Text(
+            'MOVIE LIST',
+            style: BuzzooleTextStyles().setBlackStyle(
+                BuzzooleSizingEngine().setMinimumFontSize(context),
+                BuzzooleColors().buzzooleMainColor),
+          )),
+      drawer: BuzzooleDrawer(),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,

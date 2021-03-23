@@ -14,6 +14,8 @@ class LoginFetchingEvent extends LoginEvent {
 
 class SessionFetchingEvent extends LoginEvent {}
 
+class FavouriteListFetchingEvent extends LoginEvent {}
+
 class FetchedEvent extends LoginEvent {}
 
 class FailedEvent extends LoginEvent {}

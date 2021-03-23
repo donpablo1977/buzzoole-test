@@ -51,6 +51,18 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
       } catch (e) {
         yield FailedState();
       }
+    } else if (event is MovieCheckingEvent) {
+      try {
+        bool _watchlisted =
+            await movieRepository.checkWatchlistedMovie(event.id);
+        if (_watchlisted != null) {
+          yield MovieCheckedState(_watchlisted);
+        } else {
+          yield FailedState();
+        }
+      } catch (e) {
+        yield FailedState();
+      }
     }
   }
 }
