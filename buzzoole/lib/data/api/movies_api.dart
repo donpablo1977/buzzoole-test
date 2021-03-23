@@ -37,4 +37,14 @@ class MovieAPI {
     }
     return _movieImages;
   }
+
+  Future<MovieList> searchMoviesWithTerm(String term) async {
+    final response = await http.get(
+        '${BuzzooleStrings().baseURL}/search/movie?api_key=${BuzzooleStrings().apiKey}&language=en-US&query=$term');
+    MovieList _movieList;
+    if (response.statusCode == 200) {
+      _movieList = MovieList.fromJson(jsonDecode(response.body));
+    }
+    return _movieList;
+  }
 }

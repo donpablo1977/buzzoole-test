@@ -22,4 +22,8 @@ class MovieRepository {
   Future<bool> checkWatchlistedMovie(int id) async {
     return BuzzooleUtils().checkMovieInWatchlist(id);
   }
+
+  Future<MovieList> searchMoviesWithTerm(String term) async {
+    return _movieAPI.searchMoviesWithTerm(term);
+  }
 }

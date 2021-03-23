@@ -25,4 +25,9 @@ class MovieCheckedState extends MoviesState {
   MovieCheckedState(this.watchListed);
 }
 
+class FoundedState extends MoviesState {
+  final MovieList movieList;
+  FoundedState(this.movieList);
+}
+
 class FailedState extends MoviesState {}

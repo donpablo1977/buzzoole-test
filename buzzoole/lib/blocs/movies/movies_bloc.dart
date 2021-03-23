@@ -63,6 +63,17 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
       } catch (e) {
         yield FailedState();
       }
+    } else if (event is SearchingEvent) {
+      yield FetchingState();
+      try {
+        MovieList _movieList =
+            await movieRepository.searchMoviesWithTerm(event.term);
+        if (_movieList != null) {
+          yield FoundedState(_movieList);
+        }
+      } catch (e) {
+        yield FailedState();
+      }
     }
   }
 }

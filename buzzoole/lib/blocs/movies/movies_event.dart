@@ -21,6 +21,12 @@ class MovieCheckingEvent extends MoviesEvent {
   MovieCheckingEvent(this.id);
 }
 
+class SearchingEvent extends MoviesEvent {
+  final String term;
+
+  SearchingEvent(this.term);
+}
+
 class FetchedEvent extends MoviesEvent {}
 
 class FailedEvent extends MoviesEvent {}

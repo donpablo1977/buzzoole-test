@@ -7,6 +7,7 @@ import 'package:buzzoole/data/repositories/movies_repository.dart';
 import 'package:buzzoole/presentation/screens/login_screen.dart';
 import 'package:buzzoole/presentation/screens/movie_detail_screen.dart';
 import 'package:buzzoole/presentation/screens/movie_list_screen.dart';
+import 'package:buzzoole/presentation/screens/search_screen.dart';
 import 'package:buzzoole/presentation/screens/watchlist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,9 +18,9 @@ class BuzzooleRouter {
     switch (settings.name) {
       case '/':
         return MaterialPageRoute(builder: (context) {
-          LoginRepository _loginRepo = LoginRepository();
+          LoginRepository _repo = LoginRepository();
           return BlocProvider<LoginBloc>(
-            create: (context) => LoginBloc(_loginRepo),
+            create: (context) => LoginBloc(_repo),
             child: LoginScreen(),
           );
         });
@@ -27,9 +28,9 @@ class BuzzooleRouter {
         break;
       case '/movie_list':
         return MaterialPageRoute(builder: (context) {
-          MovieRepository _movieRepository = MovieRepository();
+          MovieRepository _repo = MovieRepository();
           return BlocProvider<MoviesBloc>(
-            create: (context) => MoviesBloc(_movieRepository),
+            create: (context) => MoviesBloc(_repo),
             child: MovieListScreen(),
           );
         });
@@ -48,10 +49,18 @@ class BuzzooleRouter {
         break;
       case '/watchlist':
         return MaterialPageRoute(builder: (context) {
-          AccountRepository _accountRepository = AccountRepository();
+          AccountRepository _repo = AccountRepository();
           return BlocProvider<AccountBloc>(
-            create: (context) => AccountBloc(_accountRepository),
+            create: (context) => AccountBloc(_repo),
             child: WatchlistScreen(),
+          );
+        });
+      case '/search':
+        return MaterialPageRoute(builder: (context) {
+          MovieRepository _repo = MovieRepository();
+          return BlocProvider<MoviesBloc>(
+            create: (context) => MoviesBloc(_repo),
+            child: SearchScreen(),
           );
         });
         break;
