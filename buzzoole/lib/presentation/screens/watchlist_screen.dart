@@ -1,5 +1,6 @@
 import 'package:buzzoole/blocs/account/account_bloc.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_drawer.dart';
+import 'package:buzzoole/presentation/widgets/buzzoole_loader.dart';
 import 'package:buzzoole/presentation/widgets/watchlisted_card.dart';
 import 'package:buzzoole/utils/colors.dart';
 import 'package:buzzoole/utils/size_engine.dart';
@@ -24,8 +25,10 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: BuzzooleColors().buzzooleMainColor),
           elevation: 0,
           title: Text(
             'WATCHLIST',
@@ -37,7 +40,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
       body: BlocConsumer<AccountBloc, AccountState>(
         builder: (context, state) {
           if (state is WatchlistFetchingEvent) {
-            return Center(child: CircularProgressIndicator());
+            return Center(child: BuzzooleLoader());
           } else if (state is WatchlistFetchedState) {
             return GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -47,17 +50,22 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                 itemCount: state.movieList.results.length,
                 itemBuilder: (context, index) {
                   return InkWell(
-                      onTap: () {
-                        Navigator.of(context).pushNamed('/movie_detail',
-                            arguments: {
-                              'id': state.movieList.results[index].id
-                            });
+                      onTap: () async {
+                        var _returning = await Navigator.of(context)
+                            .pushNamed('/movie_detail', arguments: {
+                          'id': state.movieList.results[index].id
+                        });
+                        if (_returning) {
+                          context
+                              .read<AccountBloc>()
+                              .add(WatchlistFetchingEvent());
+                        }
                       },
                       child: WatchlistedCard(
                           movie: state.movieList.results[index]));
                 });
           }
-          return Container();
+          return Center(child: BuzzooleLoader());
         },
         listener: (context, state) {},
       ),

@@ -1,5 +1,6 @@
 import 'package:buzzoole/blocs/movies/movies_bloc.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_drawer.dart';
+import 'package:buzzoole/presentation/widgets/buzzoole_loader.dart';
 import 'package:buzzoole/presentation/widgets/watchlisted_card.dart';
 import 'package:buzzoole/utils/colors.dart';
 import 'package:buzzoole/utils/size_engine.dart';
@@ -18,17 +19,20 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize:
               Size(MediaQuery.of(context).size.width, kToolbarHeight),
           child: BlocConsumer<MoviesBloc, MoviesState>(
             builder: (context, state) {
               return AppBar(
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: Colors.white,
+                  iconTheme:
+                      IconThemeData(color: BuzzooleColors().buzzooleMainColor),
                   elevation: 0,
                   title: Text(
-                    state is FoundedState
-                        ? 'THERE ARE THE FOUNDED MOVIES'
+                    state is FoundState
+                        ? 'HERE IS THE FOUND MOVIES'
                         : 'SEARCH FOR A MOVIE',
                     style: BuzzooleTextStyles().setBlackStyle(
                         BuzzooleSizingEngine().setMinimumFontSize(context),
@@ -45,14 +49,14 @@ class _SearchScreenState extends State<SearchScreen> {
             child: BlocConsumer<MoviesBloc, MoviesState>(
               listener: (context, state) {},
               builder: (context, state) {
-                if (state is FoundedState) {
+                if (state is FoundState) {
                   return Container(
                       child: GridView.builder(
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
                             mainAxisExtent:
-                                MediaQuery.of(context).size.height / 4,
+                                MediaQuery.of(context).size.height / 5,
                           ),
                           itemCount: state.movieList.results.length,
                           itemBuilder: (context, index) {
@@ -68,7 +72,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           }));
                 } else if (state is FetchingState) {
                   return Center(
-                    child: CircularProgressIndicator(),
+                    child: BuzzooleLoader(),
                   );
                 }
                 return Center(
@@ -79,6 +83,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     child: TextField(
                       onSubmitted: (value) {
                         context.read<MoviesBloc>().add(SearchingEvent(value));
+                        FocusScope.of(context).unfocus();
                       },
                       autofocus: true,
                       cursorWidth: 1,

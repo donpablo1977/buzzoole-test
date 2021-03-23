@@ -25,4 +25,8 @@ class BuzzooleSizingEngine {
   double setMinimumFontSize(BuildContext context) {
     return MediaQuery.of(context).size.width / 30;
   }
+
+  double setThumbImageSize(BuildContext context) {
+    return MediaQuery.of(context).size.width / 5;
+  }
 }

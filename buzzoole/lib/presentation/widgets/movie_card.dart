@@ -4,6 +4,7 @@ import 'package:buzzoole/utils/size_engine.dart';
 import 'package:buzzoole/utils/strings.dart';
 import 'package:buzzoole/utils/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class MovieCard extends StatelessWidget {
   final Movie movie;
@@ -29,10 +30,20 @@ class MovieCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(10)),
-            child: Image.network(
-                '${BuzzooleStrings().thumbImageBaseURL}${movie.posterPath}'),
-          ),
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(10)),
+              child: FadeInImage(
+                imageErrorBuilder: (context, error, stackTrace) => Image.asset(
+                    'assets/images/logo.png',
+                    width: BuzzooleSizingEngine().setThumbImageSize(context),
+                    height: BuzzooleSizingEngine().setThumbImageSize(context)),
+                fit: BoxFit.cover,
+                placeholder: AssetImage(
+                  'assets/images/logo.png',
+                ),
+                image: NetworkImage(
+                  '${BuzzooleStrings().thumbImageBaseURL}${movie.posterPath}',
+                ),
+              )),
           SizedBox(width: BuzzooleSizingEngine().setDefaultSpace(context)),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -43,17 +54,8 @@ class MovieCard extends StatelessWidget {
                   movie.title.toUpperCase(),
                   overflow: TextOverflow.ellipsis,
                   style: BuzzooleTextStyles().setBlackStyle(
-                      BuzzooleSizingEngine().setDefaultFontSize(context),
-                      BuzzooleColors().buzzooleMainColor),
-                ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width / 2,
-                child: Text(
-                  movie.releaseDate.toUpperCase(),
-                  style: BuzzooleTextStyles().setBlackStyle(
                       BuzzooleSizingEngine().setMinimumFontSize(context),
-                      BuzzooleColors().buzzooleDarkGreyColor),
+                      BuzzooleColors().buzzooleMainColor),
                 ),
               )
             ],

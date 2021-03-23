@@ -1,5 +1,6 @@
 import 'package:buzzoole/blocs/movies/movies_bloc.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_drawer.dart';
+import 'package:buzzoole/presentation/widgets/buzzoole_loader.dart';
 import 'package:buzzoole/presentation/widgets/index_indicator.dart';
 import 'package:buzzoole/presentation/widgets/movie_card.dart';
 import 'package:buzzoole/utils/colors.dart';
@@ -29,8 +30,9 @@ class _MovieListScreenState extends State<MovieListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
           elevation: 0,
           title: Text(
             'MOVIE LIST',
@@ -43,11 +45,31 @@ class _MovieListScreenState extends State<MovieListScreen> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         child: BlocConsumer<MoviesBloc, MoviesState>(
-          listener: (context, state) {},
+          listener: (context, state) {
+            if (state is TopRatedFetchedState) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  behavior: SnackBarBehavior.fixed,
+                  backgroundColor: Colors.white,
+                  duration: Duration(milliseconds: 1500),
+                  content: Container(
+                    alignment: Alignment.bottomCenter,
+                    height: MediaQuery.of(context).size.height / 20,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    child: Text(
+                      'YOU HAVE LOADED PAGE $page',
+                      textAlign: TextAlign.center,
+                      style: BuzzooleTextStyles().setBlackStyle(
+                          BuzzooleSizingEngine().setMinimumFontSize(context),
+                          BuzzooleColors().buzzooleMainColor),
+                    ),
+                  )));
+            }
+          },
           builder: (context, state) {
             if (state is FetchingState) {
               return Center(
-                child: CircularProgressIndicator(),
+                child: BuzzooleLoader(),
               );
             } else if (state is TopRatedFetchedState) {
               return NotificationListener<ScrollNotification>(
@@ -77,7 +99,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
                     itemBuilder: (context, index) {
                       return Row(
                         children: [
-                          IndexIndicator(page: page, index: index),
+                          IndexIndicator(index: index + 1),
                           InkWell(
                               onTap: () {
                                 Navigator.of(context).pushNamed('/movie_detail',
@@ -89,7 +111,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
                     }),
               );
             }
-            return Center(child: CircularProgressIndicator());
+            return Center(child: BuzzooleLoader());
           },
         ),
       ),

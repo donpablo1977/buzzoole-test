@@ -28,9 +28,7 @@ class AccountAPI {
         headers: {'Content-Type': 'application/json;charset=utf-8'},
         body: jsonEncode(
             {'media_type': 'movie', 'media_id': movieId, 'watchlist': toggle}));
-    if (response.statusCode == 200) {
-      print("MOVIE ADDED TO WATCHLIST");
-    }
+    if (response.statusCode == 200) {}
   }
 
   Future<MovieList> getAllWatchlistedMovies() async {

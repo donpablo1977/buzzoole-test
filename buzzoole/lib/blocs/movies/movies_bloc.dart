@@ -69,7 +69,7 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
         MovieList _movieList =
             await movieRepository.searchMoviesWithTerm(event.term);
         if (_movieList != null) {
-          yield FoundedState(_movieList);
+          yield FoundState(_movieList);
         }
       } catch (e) {
         yield FailedState();

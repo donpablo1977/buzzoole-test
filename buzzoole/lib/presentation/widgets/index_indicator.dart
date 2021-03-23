@@ -4,10 +4,8 @@ import 'package:buzzoole/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class IndexIndicator extends StatelessWidget {
-  final int page;
   final int index;
-  const IndexIndicator({Key key, @required this.page, @required this.index})
-      : super(key: key);
+  const IndexIndicator({Key key, @required this.index}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +26,7 @@ class IndexIndicator extends StatelessWidget {
                 color: Colors.black.withAlpha(40),
                 offset: Offset(0, 10))
           ]),
-      child: Text(
-          page > 1
-              ? ((page * 20) + index + 1).toString()
-              : (index + 1).toString(),
+      child: Text(index.toString(),
           style: BuzzooleTextStyles().setBlackStyle(
               BuzzooleSizingEngine().setMinimumFontSize(context),
               BuzzooleColors().buzzooleMainColor)),

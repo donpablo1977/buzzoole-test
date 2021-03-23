@@ -2,6 +2,7 @@ import 'package:buzzoole/blocs/account/account_bloc.dart';
 import 'package:buzzoole/blocs/movies/movies_bloc.dart';
 import 'package:buzzoole/data/models/movie_detail.dart';
 import 'package:buzzoole/data/models/movie_images.dart';
+import 'package:buzzoole/presentation/widgets/buzzoole_loader.dart';
 import 'package:buzzoole/utils/colors.dart';
 import 'package:buzzoole/utils/size_engine.dart';
 import 'package:buzzoole/utils/strings.dart';
@@ -10,6 +11,7 @@ import 'package:favorite_button/favorite_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final int id;
@@ -48,9 +50,16 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           builder: (context, state) {
             if (state is MovieCheckedState) {
               return Scaffold(
+                backgroundColor: Colors.white,
                 appBar: AppBar(
-                    backgroundColor: Colors.transparent,
+                    backgroundColor: Colors.white,
                     elevation: 0,
+                    leading: IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                      icon: Icon(Icons.chevron_left),
+                    ),
                     title: Text(
                       _detail.title.toUpperCase(),
                       style: BuzzooleTextStyles().setBlackStyle(
@@ -68,7 +77,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                               margin: EdgeInsets.all(BuzzooleSizingEngine()
                                   .setDefaultSpace(context)),
                               width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height / 3,
+                              height: MediaQuery.of(context).size.height / 4,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(20),
@@ -81,9 +90,20 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                   curve: Curves.fastOutSlowIn,
                                   itemBuilder:
                                       (BuildContext context, int index) {
-                                    return Image.network(
-                                      '${BuzzooleStrings().imageBaseURL}${_images.backdrops[index].filePath}',
-                                      fit: BoxFit.fitHeight,
+                                    return FadeInImage(
+                                      imageErrorBuilder: (context, error,
+                                              stackTrace) =>
+                                          Image.asset('assets/images/logo.png',
+                                              width: BuzzooleSizingEngine()
+                                                  .setThumbImageSize(context),
+                                              height: BuzzooleSizingEngine()
+                                                  .setThumbImageSize(context)),
+                                      fit: BoxFit.cover,
+                                      placeholder:
+                                          MemoryImage(kTransparentImage),
+                                      image: NetworkImage(
+                                        '${BuzzooleStrings().imageBaseURL}${_images.backdrops[index].filePath}',
+                                      ),
                                     );
                                   },
                                   itemCount: _images.backdrops.length,
@@ -92,8 +112,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                               decoration: BoxDecoration(boxShadow: [
                                 BoxShadow(
                                     offset: Offset(0, 10),
-                                    blurRadius: 30,
-                                    color: Colors.black.withAlpha(100))
+                                    blurRadius: 20,
+                                    color: BuzzooleColors()
+                                        .buzzooleMainColor
+                                        .withAlpha(30))
                               ])),
                           Container(
                             height: MediaQuery.of(context).size.height / 2,
@@ -118,7 +140,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                     Column(
                                       children: [
                                         Text(
-                                            ('${(_detail.popularity / 1000).round().toString()}K'),
+                                            (_detail.popularity >= 0
+                                                ? '${(_detail.popularity / 1000).ceil().toString()}K'
+                                                : 'NO DATA'),
                                             style: BuzzooleTextStyles()
                                                 .setBlackStyle(
                                                     BuzzooleSizingEngine()
@@ -126,7 +150,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                                             context),
                                                     BuzzooleColors()
                                                         .buzzooleMainColor)),
-                                        Text(('POPOLARITÀ'),
+                                        Text(('POPULARITY'),
                                             style: BuzzooleTextStyles()
                                                 .setBlackStyle(
                                                     BuzzooleSizingEngine()
@@ -152,7 +176,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                                             context),
                                                     BuzzooleColors()
                                                         .buzzooleMainColor)),
-                                        Text(('MEDIA VOTI'),
+                                        Text(('VOTE AVERAGE'),
                                             style: BuzzooleTextStyles()
                                                 .setBlackStyle(
                                                     BuzzooleSizingEngine()
@@ -170,7 +194,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                     Column(
                                       children: [
                                         Text(
-                                            ('${(_detail.voteCount / 1000).toString()}K'),
+                                            ('${(_detail.voteCount / 1000).ceil().toString()}K'),
                                             style: BuzzooleTextStyles()
                                                 .setBlackStyle(
                                                     BuzzooleSizingEngine()
@@ -178,7 +202,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                                             context),
                                                     BuzzooleColors()
                                                         .buzzooleMainColor)),
-                                        Text(('VOTI RICEVUTI'),
+                                        Text(('VOTE COUNT'),
                                             style: BuzzooleTextStyles()
                                                 .setBlackStyle(
                                                     BuzzooleSizingEngine()
@@ -198,10 +222,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       Positioned(
                         bottom: 50,
                         left: MediaQuery.of(context).size.width / 2 -
-                            MediaQuery.of(context).size.width / 10,
+                            MediaQuery.of(context).size.width / 20,
                         child: Container(
-                            width: MediaQuery.of(context).size.width / 5,
-                            height: MediaQuery.of(context).size.width / 5,
+                            width: MediaQuery.of(context).size.width / 10,
+                            height: MediaQuery.of(context).size.width / 10,
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 boxShadow: [
@@ -213,6 +237,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(100))),
                             child: FavoriteButton(
+                              iconSize: BuzzooleSizingEngine()
+                                      .setDefaultSpace(context) /
+                                  2,
                               isFavorite: state.watchListed,
                               iconColor: BuzzooleColors().buzzooleMainColor,
                               valueChanged: (_isWatchlisted) async {
@@ -230,8 +257,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   ),
                 ),
               );
+            } else if (state is WatchlistToggleEvent) {
+              return Container();
             } else {
-              return Scaffold(body: Center(child: CircularProgressIndicator()));
+              return Scaffold(body: Center(child: BuzzooleLoader()));
             }
           },
         );

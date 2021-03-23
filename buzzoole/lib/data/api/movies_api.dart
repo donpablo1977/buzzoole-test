@@ -19,7 +19,7 @@ class MovieAPI {
 
   Future<MovieDetail> fetchMovieDetail(int id) async {
     final response = await http.get(
-        '${BuzzooleStrings().baseURL}/movie/$id?api_key=${BuzzooleStrings().apiKey}&language=it-IT');
+        '${BuzzooleStrings().baseURL}/movie/$id?api_key=${BuzzooleStrings().apiKey}&language=en-US');
     MovieDetail _movieDetail;
     if (response.statusCode == 200) {
       _movieDetail = MovieDetail.fromJson(jsonDecode(response.body));
