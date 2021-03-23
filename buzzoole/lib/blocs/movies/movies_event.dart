@@ -23,8 +23,8 @@ class MovieCheckingEvent extends MoviesEvent {
 
 class SearchingEvent extends MoviesEvent {
   final String term;
-
-  SearchingEvent(this.term);
+  final int page;
+  SearchingEvent(this.term, this.page);
 }
 
 class FetchedEvent extends MoviesEvent {}

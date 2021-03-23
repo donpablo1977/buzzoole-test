@@ -1,4 +1,5 @@
 import 'package:buzzoole/blocs/movies/movies_bloc.dart';
+import 'package:buzzoole/data/models/movie.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_drawer.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_loader.dart';
 import 'package:buzzoole/presentation/widgets/watchlisted_card.dart';
@@ -16,6 +17,27 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  ScrollController _scrollController;
+  int _page;
+  List<Movie> _movies;
+  double _currentPixel;
+  String _term;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _movies = [];
+    _page = 1;
+    _currentPixel = 0;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,29 +69,67 @@ class _SearchScreenState extends State<SearchScreen> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: BlocConsumer<MoviesBloc, MoviesState>(
-              listener: (context, state) {},
+              listener: (context, state) {
+                if (state is FoundState) {
+                  for (var movie in state.movieList.results) {
+                    _movies.add(movie);
+                  }
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (_currentPixel > 0) {
+                      _scrollController.jumpTo(
+                          _scrollController.position.pixels + _currentPixel);
+                      _scrollController.animateTo(
+                          _scrollController.position.pixels +
+                              MediaQuery.of(context).size.height / 6,
+                          duration: Duration(milliseconds: 1000),
+                          curve: Curves.fastOutSlowIn);
+                    }
+                  });
+                  print(_movies.length);
+                }
+              },
               builder: (context, state) {
                 if (state is FoundState) {
                   return Container(
-                      child: GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            mainAxisExtent:
-                                MediaQuery.of(context).size.height / 5,
-                          ),
-                          itemCount: state.movieList.results.length,
-                          itemBuilder: (context, index) {
-                            return InkWell(
-                                onTap: () {
-                                  Navigator.of(context)
-                                      .pushNamed('/movie_detail', arguments: {
-                                    'id': state.movieList.results[index].id
-                                  });
-                                },
-                                child: WatchlistedCard(
-                                    movie: state.movieList.results[index]));
-                          }));
+                      child: NotificationListener<ScrollNotification>(
+                    onNotification: (notification) {
+                      if (notification is ScrollNotification) {
+                        if (_scrollController.offset >=
+                            notification.metrics.maxScrollExtent) {
+                          _page = _page + 1;
+                          context
+                              .read<MoviesBloc>()
+                              .add(SearchingEvent(_term, _page));
+                          _currentPixel = notification.metrics.pixels;
+                        } else if (_scrollController.offset <= 0) {
+                          if (_page > 1) {
+                            _page = _page - 1;
+                            context
+                                .read<MoviesBloc>()
+                                .add(SearchingEvent(_term, _page));
+                          }
+                        }
+                        return true;
+                      }
+                      return false;
+                    },
+                    child: GridView.builder(
+                        controller: _scrollController,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisExtent:
+                              MediaQuery.of(context).size.height / 5,
+                        ),
+                        itemCount: _movies.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                              onTap: () {
+                                Navigator.of(context).pushNamed('/movie_detail',
+                                    arguments: {'id': _movies[index].id});
+                              },
+                              child: WatchlistedCard(movie: _movies[index]));
+                        }),
+                  ));
                 } else if (state is FetchingState) {
                   return Center(
                     child: BuzzooleLoader(),
@@ -82,7 +142,9 @@ class _SearchScreenState extends State<SearchScreen> {
                         right: BuzzooleSizingEngine().setDefaultSpace(context)),
                     child: TextField(
                       onSubmitted: (value) {
-                        context.read<MoviesBloc>().add(SearchingEvent(value));
+                        context
+                            .read<MoviesBloc>()
+                            .add(SearchingEvent(value, _page));
                         FocusScope.of(context).unfocus();
                       },
                       autofocus: true,

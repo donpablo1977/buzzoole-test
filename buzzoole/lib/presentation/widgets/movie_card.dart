@@ -4,7 +4,6 @@ import 'package:buzzoole/utils/size_engine.dart';
 import 'package:buzzoole/utils/strings.dart';
 import 'package:buzzoole/utils/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class MovieCard extends StatelessWidget {
   final Movie movie;
@@ -33,12 +32,12 @@ class MovieCard extends StatelessWidget {
               borderRadius: BorderRadius.only(topLeft: Radius.circular(10)),
               child: FadeInImage(
                 imageErrorBuilder: (context, error, stackTrace) => Image.asset(
-                    'assets/images/logo.png',
+                    'assets/images/mini_logo.png',
                     width: BuzzooleSizingEngine().setThumbImageSize(context),
                     height: BuzzooleSizingEngine().setThumbImageSize(context)),
                 fit: BoxFit.cover,
                 placeholder: AssetImage(
-                  'assets/images/logo.png',
+                  'assets/images/mini_logo.png',
                 ),
                 image: NetworkImage(
                   '${BuzzooleStrings().thumbImageBaseURL}${movie.posterPath}',

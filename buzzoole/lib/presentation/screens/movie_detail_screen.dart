@@ -11,7 +11,6 @@ import 'package:favorite_button/favorite_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final int id;
@@ -99,8 +98,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                               height: BuzzooleSizingEngine()
                                                   .setThumbImageSize(context)),
                                       fit: BoxFit.cover,
-                                      placeholder:
-                                          MemoryImage(kTransparentImage),
+                                      placeholder: AssetImage(
+                                        'assets/images/logo.png',
+                                      ),
                                       image: NetworkImage(
                                         '${BuzzooleStrings().imageBaseURL}${_images.backdrops[index].filePath}',
                                       ),

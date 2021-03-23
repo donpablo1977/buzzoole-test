@@ -23,7 +23,7 @@ class MovieRepository {
     return BuzzooleUtils().checkMovieInWatchlist(id);
   }
 
-  Future<MovieList> searchMoviesWithTerm(String term) async {
-    return _movieAPI.searchMoviesWithTerm(term);
+  Future<MovieList> searchMoviesWithTerm(String term, int page) async {
+    return _movieAPI.searchMoviesWithTerm(term, page);
   }
 }

@@ -67,7 +67,7 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
       yield FetchingState();
       try {
         MovieList _movieList =
-            await movieRepository.searchMoviesWithTerm(event.term);
+            await movieRepository.searchMoviesWithTerm(event.term, event.page);
         if (_movieList != null) {
           yield FoundState(_movieList);
         }

@@ -15,12 +15,6 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   AccountBloc(this.accountRepository) : super(AccountInitial());
 
   @override
-  void onTransition(Transition<AccountEvent, AccountState> transition) {
-    super.onTransition(transition);
-    print(transition);
-  }
-
-  @override
   Stream<AccountState> mapEventToState(
     AccountEvent event,
   ) async* {
