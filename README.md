@@ -15,7 +15,7 @@ CODE EXECUTION PROCEDURE:
 8. Enjoy it
 
 The app requires a valid "The Movie Database" account to login the user.
-Anyway, I have created a test uccount (username: buzzoole - password: buzzoole), that you can use.
+Anyway, I have created a test account (username: buzzoole - password: buzzoole), that you can use.
 
 APP FEATURES:
 
