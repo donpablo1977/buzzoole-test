@@ -16,11 +16,6 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
   MoviesBloc(this.movieRepository) : super(MoviesInitial());
 
   @override
-  void onTransition(Transition<MoviesEvent, MoviesState> transition) {
-    super.onTransition(transition);
-  }
-
-  @override
   Stream<MoviesState> mapEventToState(
     MoviesEvent event,
   ) async* {
@@ -29,8 +24,10 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
       try {
         MovieList _movieList =
             await movieRepository.fetchPopularMovies(event.page);
-        if (_movieList.results.isNotEmpty) {
+        if (_movieList != null && _movieList.results.length > 0) {
           yield TopRatedFetchedState(_movieList.results);
+        } else if (_movieList != null && _movieList.results.length == 0) {
+          yield EmptyState();
         } else {
           yield FailedState();
         }
@@ -68,8 +65,12 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
       try {
         MovieList _movieList =
             await movieRepository.searchMoviesWithTerm(event.term, event.page);
-        if (_movieList != null) {
+        if (_movieList != null && _movieList.results.length > 0) {
           yield FoundState(_movieList);
+        } else if (_movieList != null && _movieList.results.length == 0) {
+          yield EmptyState();
+        } else {
+          yield FailedState();
         }
       } catch (e) {
         yield FailedState();

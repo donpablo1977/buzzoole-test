@@ -2,6 +2,7 @@ import 'package:buzzoole/blocs/movies/movies_bloc.dart';
 import 'package:buzzoole/data/models/movie.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_drawer.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_loader.dart';
+import 'package:buzzoole/presentation/widgets/custom_error_widget.dart';
 import 'package:buzzoole/presentation/widgets/movie_card.dart';
 import 'package:buzzoole/utils/colors.dart';
 import 'package:buzzoole/utils/size_engine.dart';
@@ -54,16 +55,24 @@ class _MovieListScreenState extends State<MovieListScreen> {
                 BuzzooleColors().buzzooleMainColor),
           )),
       drawer: BuzzooleDrawer(),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.sort),
-        onPressed: () {
-          if (_orderBy == 'asc') {
-            _orderBy = 'desc';
-          } else {
-            _orderBy = 'asc';
+      floatingActionButton: BlocConsumer<MoviesBloc, MoviesState>(
+        builder: (context, state) {
+          if (state is TopRatedFetchedState) {
+            return FloatingActionButton(
+              child: Icon(Icons.sort),
+              onPressed: () {
+                if (_orderBy == 'asc') {
+                  _orderBy = 'desc';
+                } else {
+                  _orderBy = 'asc';
+                }
+                context.read<MoviesBloc>().add(SortingEvent(_movies, _orderBy));
+              },
+            );
           }
-          context.read<MoviesBloc>().add(SortingEvent(_movies, _orderBy));
+          return Container();
         },
+        listener: (context, state) {},
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,
@@ -93,6 +102,16 @@ class _MovieListScreenState extends State<MovieListScreen> {
               return Center(
                 child: BuzzooleLoader(),
               );
+            } else if (state is EmptyState) {
+              return CustomErrorWidget(
+                  title: 'OPS!',
+                  description: 'NO MOVIES FOUND',
+                  titleTextStyle: BuzzooleTextStyles().setBlackStyle(
+                      BuzzooleSizingEngine().setMaximumFontSize(context),
+                      BuzzooleColors().buzzooleMainColor),
+                  descriptionTextStyle: BuzzooleTextStyles().setBlackStyle(
+                      BuzzooleSizingEngine().setMinimumFontSize(context),
+                      BuzzooleColors().buzzooleDarkGreyColor));
             } else if (state is TopRatedFetchedState || state is SortedState) {
               return NotificationListener<ScrollNotification>(
                 onNotification: (scrollNotification) {
@@ -131,7 +150,15 @@ class _MovieListScreenState extends State<MovieListScreen> {
                 ),
               );
             }
-            return Center(child: BuzzooleLoader());
+            return CustomErrorWidget(
+                title: 'OPS!',
+                description: 'WE HAVE SOME PROBLEMS',
+                titleTextStyle: BuzzooleTextStyles().setBlackStyle(
+                    BuzzooleSizingEngine().setMaximumFontSize(context),
+                    BuzzooleColors().buzzooleMainColor),
+                descriptionTextStyle: BuzzooleTextStyles().setBlackStyle(
+                    BuzzooleSizingEngine().setMinimumFontSize(context),
+                    BuzzooleColors().buzzooleDarkGreyColor));
           },
         ),
       ),

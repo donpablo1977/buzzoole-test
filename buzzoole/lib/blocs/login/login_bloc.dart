@@ -16,12 +16,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc(this.loginRepository) : super(InitialState());
 
   @override
-  void onTransition(Transition<LoginEvent, LoginState> transition) {
-    super.onTransition(transition);
-    print(transition);
-  }
-
-  @override
   Stream<LoginState> mapEventToState(
     LoginEvent event,
   ) async* {

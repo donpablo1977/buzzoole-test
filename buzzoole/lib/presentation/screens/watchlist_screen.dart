@@ -38,6 +38,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
           )),
       drawer: BuzzooleDrawer(),
       body: BlocConsumer<AccountBloc, AccountState>(
+        listener: (context, state) {},
         builder: (context, state) {
           if (state is WatchlistFetchingEvent) {
             return Center(child: BuzzooleLoader());
@@ -67,7 +68,6 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
           }
           return Center(child: BuzzooleLoader());
         },
-        listener: (context, state) {},
       ),
     );
   }

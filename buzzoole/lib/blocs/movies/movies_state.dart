@@ -34,4 +34,6 @@ class SortedState extends MoviesState {
   SortedState();
 }
 
+class EmptyState extends MoviesState {}
+
 class FailedState extends MoviesState {}

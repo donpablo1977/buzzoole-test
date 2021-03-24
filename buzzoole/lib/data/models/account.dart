@@ -1,27 +1,16 @@
 class Account {
   Avatar avatar;
   int id;
-  String iso6391;
-  String iso31661;
   String name;
   bool includeAdult;
   String username;
 
-  Account(
-      {this.avatar,
-      this.id,
-      this.iso6391,
-      this.iso31661,
-      this.name,
-      this.includeAdult,
-      this.username});
+  Account({this.avatar, this.id, this.name, this.includeAdult, this.username});
 
   Account.fromJson(Map<String, dynamic> json) {
     avatar =
         json['avatar'] != null ? new Avatar.fromJson(json['avatar']) : null;
     id = json['id'];
-    iso6391 = json['iso_639_1'];
-    iso31661 = json['iso_3166_1'];
     name = json['name'];
     includeAdult = json['include_adult'];
     username = json['username'];
@@ -33,8 +22,6 @@ class Account {
       data['avatar'] = this.avatar.toJson();
     }
     data['id'] = this.id;
-    data['iso_639_1'] = this.iso6391;
-    data['iso_3166_1'] = this.iso31661;
     data['name'] = this.name;
     data['include_adult'] = this.includeAdult;
     data['username'] = this.username;

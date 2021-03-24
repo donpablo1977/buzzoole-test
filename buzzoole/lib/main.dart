@@ -7,8 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences _preferences = await SharedPreferences.getInstance();
+  //SETUP DELLA INITIAL ROUTE BASATA SULLA PRESENZA DELLO USERNAME NEL BUNDLE DELL'APP
   String _initialRoute = '/';
-  // BuzzooleUtils().deleteSharedPreferences();
   if (_preferences.getString('username') != null) {
     _initialRoute = '/search';
   }

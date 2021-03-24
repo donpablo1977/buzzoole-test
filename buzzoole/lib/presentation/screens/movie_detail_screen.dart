@@ -1,8 +1,9 @@
-import 'package:buzzoole/blocs/account/account_bloc.dart';
+import 'package:buzzoole/blocs/account/account_bloc.dart' as account;
 import 'package:buzzoole/blocs/movies/movies_bloc.dart';
 import 'package:buzzoole/data/models/movie_detail.dart';
 import 'package:buzzoole/data/models/movie_images.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_loader.dart';
+import 'package:buzzoole/presentation/widgets/custom_error_widget.dart';
 import 'package:buzzoole/utils/colors.dart';
 import 'package:buzzoole/utils/size_engine.dart';
 import 'package:buzzoole/utils/strings.dart';
@@ -28,7 +29,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<AccountBloc>().add(WatchlistFetchingEvent());
+    context.read<account.AccountBloc>().add(account.WatchlistFetchingEvent());
     context.read<MoviesBloc>().add(DetailFetchingEvent(this.widget.id));
   }
 
@@ -244,11 +245,13 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                               iconColor: BuzzooleColors().buzzooleMainColor,
                               valueChanged: (_isWatchlisted) async {
                                 if (state.watchListed) {
-                                  BlocProvider.of<AccountBloc>(context).add(
-                                      WatchlistToggleEvent(_detail.id, false));
+                                  BlocProvider.of<account.AccountBloc>(context)
+                                      .add(account.WatchlistToggleEvent(
+                                          _detail.id, false));
                                 } else {
-                                  BlocProvider.of<AccountBloc>(context).add(
-                                      WatchlistToggleEvent(_detail.id, true));
+                                  BlocProvider.of<account.AccountBloc>(context)
+                                      .add(account.WatchlistToggleEvent(
+                                          _detail.id, true));
                                 }
                               },
                             )),
@@ -257,8 +260,35 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   ),
                 ),
               );
-            } else if (state is WatchlistToggleEvent) {
+            } else if (state is account.WatchlistToggleEvent) {
               return Container();
+            } else if (state is FailedState) {
+              return Scaffold(
+                backgroundColor: Colors.white,
+                appBar: AppBar(
+                  backgroundColor: Colors.white,
+                  elevation: 0,
+                  leading: IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    icon: Icon(Icons.chevron_left),
+                  ),
+                ),
+                body: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: CustomErrorWidget(
+                      title: 'OPS!',
+                      description: 'WE HAVE SOME PROBLEMS',
+                      titleTextStyle: BuzzooleTextStyles().setBlackStyle(
+                          BuzzooleSizingEngine().setMaximumFontSize(context),
+                          BuzzooleColors().buzzooleMainColor),
+                      descriptionTextStyle: BuzzooleTextStyles().setBlackStyle(
+                          BuzzooleSizingEngine().setMinimumFontSize(context),
+                          BuzzooleColors().buzzooleDarkGreyColor)),
+                ),
+              );
             } else {
               return Scaffold(body: Center(child: BuzzooleLoader()));
             }

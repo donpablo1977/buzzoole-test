@@ -14,8 +14,10 @@ class MovieAPI {
     MovieList _movieList;
     if (response.statusCode == 200) {
       _movieList = MovieList.fromJson(jsonDecode(response.body));
+      sortMoviesByVoteCount(_movieList.results, 'desc');
+    } else {
+      return null;
     }
-    sortMoviesByVoteCount(_movieList.results, 'desc');
 
     return _movieList;
   }
@@ -26,6 +28,8 @@ class MovieAPI {
     MovieDetail _movieDetail;
     if (response.statusCode == 200) {
       _movieDetail = MovieDetail.fromJson(jsonDecode(response.body));
+    } else {
+      return null;
     }
     return _movieDetail;
   }
@@ -36,7 +40,6 @@ class MovieAPI {
     MovieImages _movieImages;
     if (response.statusCode == 200) {
       _movieImages = MovieImages.fromJson(jsonDecode(response.body));
-      print(_movieImages.posters.length);
     }
     return _movieImages;
   }
@@ -47,6 +50,8 @@ class MovieAPI {
     MovieList _movieList;
     if (response.statusCode == 200) {
       _movieList = MovieList.fromJson(jsonDecode(response.body));
+    } else {
+      return null;
     }
     return _movieList;
   }

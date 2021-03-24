@@ -2,7 +2,8 @@ import 'package:buzzoole/blocs/movies/movies_bloc.dart';
 import 'package:buzzoole/data/models/movie.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_drawer.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_loader.dart';
-import 'package:buzzoole/presentation/widgets/watchlisted_card.dart';
+import 'package:buzzoole/presentation/widgets/custom_error_widget.dart';
+import 'package:buzzoole/presentation/widgets/movie_card.dart';
 import 'package:buzzoole/utils/colors.dart';
 import 'package:buzzoole/utils/size_engine.dart';
 import 'package:buzzoole/utils/text_styles.dart';
@@ -80,7 +81,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           _scrollController.position.pixels + _currentPixel);
                       _scrollController.animateTo(
                           _scrollController.position.pixels +
-                              MediaQuery.of(context).size.height / 6,
+                              MediaQuery.of(context).size.height / 4,
                           duration: Duration(milliseconds: 1000),
                           curve: Curves.fastOutSlowIn);
                     }
@@ -105,27 +106,54 @@ class _SearchScreenState extends State<SearchScreen> {
                       }
                       return false;
                     },
-                    child: GridView.builder(
-                        controller: _scrollController,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisExtent:
-                              MediaQuery.of(context).size.height / 5,
-                        ),
-                        itemCount: _movies.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                              onTap: () {
-                                Navigator.of(context).pushNamed('/movie_detail',
-                                    arguments: {'id': _movies[index].id});
-                              },
-                              child: WatchlistedCard(movie: _movies[index]));
-                        }),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: GridView.builder(
+                          controller: _scrollController,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10,
+                            mainAxisExtent:
+                                MediaQuery.of(context).size.height / 5,
+                          ),
+                          itemCount: _movies.length,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pushNamed(
+                                      '/movie_detail',
+                                      arguments: {'id': _movies[index].id});
+                                },
+                                child: MovieCard(movie: _movies[index]));
+                          }),
+                    ),
                   ));
                 } else if (state is FetchingState) {
                   return Center(
                     child: BuzzooleLoader(),
                   );
+                } else if (state is FailedState) {
+                  return CustomErrorWidget(
+                      title: 'OPS!',
+                      description: 'WE HAVE SOME PROBLEMS',
+                      titleTextStyle: BuzzooleTextStyles().setBlackStyle(
+                          BuzzooleSizingEngine().setMaximumFontSize(context),
+                          BuzzooleColors().buzzooleMainColor),
+                      descriptionTextStyle: BuzzooleTextStyles().setBlackStyle(
+                          BuzzooleSizingEngine().setMinimumFontSize(context),
+                          BuzzooleColors().buzzooleDarkGreyColor));
+                } else if (state is EmptyState) {
+                  return CustomErrorWidget(
+                      title: 'OPS!',
+                      description: 'NO MOVIES FOUND',
+                      titleTextStyle: BuzzooleTextStyles().setBlackStyle(
+                          BuzzooleSizingEngine().setMaximumFontSize(context),
+                          BuzzooleColors().buzzooleMainColor),
+                      descriptionTextStyle: BuzzooleTextStyles().setBlackStyle(
+                          BuzzooleSizingEngine().setMinimumFontSize(context),
+                          BuzzooleColors().buzzooleDarkGreyColor));
                 }
                 return Center(
                   child: Container(

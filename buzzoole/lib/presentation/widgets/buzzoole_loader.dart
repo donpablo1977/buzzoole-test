@@ -1,4 +1,7 @@
+import 'package:buzzoole/utils/colors.dart';
 import 'package:buzzoole/utils/size_engine.dart';
+import 'package:buzzoole/utils/strings.dart';
+import 'package:buzzoole/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -7,10 +10,19 @@ class BuzzooleLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Lottie.asset('assets/animations/loader.json',
-            width: BuzzooleSizingEngine().setDefaultSpace(context) * 4,
-            height: BuzzooleSizingEngine().setDefaultSpace(context) * 4,
-            frameRate: FrameRate(120)));
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+            child: Lottie.asset('assets/animations/loader.json',
+                width: BuzzooleSizingEngine().setDefaultSpace(context) * 4,
+                height: BuzzooleSizingEngine().setDefaultSpace(context) * 4,
+                frameRate: FrameRate(120))),
+        Text(BuzzooleStrings().getRandomQuote(),
+            style: BuzzooleTextStyles().setBlackStyle(
+                BuzzooleSizingEngine().setSmallFontSize(context),
+                BuzzooleColors().buzzooleDarkGreyColor))
+      ],
+    );
   }
 }
