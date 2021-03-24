@@ -41,6 +41,8 @@ class LoginAPI {
 
     if (_loginResponse.statusCode == 200) {
       _auth = Auth.fromJson(jsonDecode(_loginResponse.body));
+    } else {
+      return null;
     }
     return _auth;
   }

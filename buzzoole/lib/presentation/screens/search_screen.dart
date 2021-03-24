@@ -107,7 +107,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       return false;
                     },
                     child: Padding(
-                      padding: const EdgeInsets.all(10),
+                      padding:
+                          EdgeInsets.all(BuzzooleSizingEngine().defaultPadding),
                       child: GridView.builder(
                           controller: _scrollController,
                           gridDelegate:

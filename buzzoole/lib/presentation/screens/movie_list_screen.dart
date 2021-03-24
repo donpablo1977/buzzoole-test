@@ -129,7 +129,8 @@ class _MovieListScreenState extends State<MovieListScreen> {
                   return false;
                 },
                 child: Padding(
-                  padding: const EdgeInsets.all(10),
+                  padding:
+                      EdgeInsets.all(BuzzooleSizingEngine().defaultPadding),
                   child: GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,

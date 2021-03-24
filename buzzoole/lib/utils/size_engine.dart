@@ -10,8 +10,18 @@ class BuzzooleSizingEngine {
 
   BuzzooleSizingEngine._internal();
 
+  double defaultPadding = 10;
+
   double setDefaultSpace(BuildContext context) {
     return MediaQuery.of(context).size.width / 20;
+  }
+
+  double setMinimumSpace(BuildContext context) {
+    return MediaQuery.of(context).size.width / 80;
+  }
+
+  double setMaximumSpace(BuildContext context) {
+    return MediaQuery.of(context).size.width / 5;
   }
 
   double setDefaultFontSize(BuildContext context) {

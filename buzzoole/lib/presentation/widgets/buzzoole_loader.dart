@@ -15,8 +15,8 @@ class BuzzooleLoader extends StatelessWidget {
       children: [
         Container(
             child: Lottie.asset('assets/animations/loader.json',
-                width: BuzzooleSizingEngine().setDefaultSpace(context) * 4,
-                height: BuzzooleSizingEngine().setDefaultSpace(context) * 4,
+                width: BuzzooleSizingEngine().setMaximumSpace(context),
+                height: BuzzooleSizingEngine().setMaximumSpace(context),
                 frameRate: FrameRate(120))),
         Text(BuzzooleStrings().getRandomQuote(),
             style: BuzzooleTextStyles().setBlackStyle(
