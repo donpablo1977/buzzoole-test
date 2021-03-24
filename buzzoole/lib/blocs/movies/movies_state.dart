@@ -30,4 +30,8 @@ class FoundState extends MoviesState {
   FoundState(this.movieList);
 }
 
+class SortedState extends MoviesState {
+  SortedState();
+}
+
 class FailedState extends MoviesState {}

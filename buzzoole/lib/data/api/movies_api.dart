@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:buzzoole/data/models/movie.dart';
 import 'package:buzzoole/data/models/movie_detail.dart';
 import 'package:buzzoole/data/models/movie_images.dart';
 import 'package:buzzoole/data/models/movie_list.dart';
@@ -46,5 +47,13 @@ class MovieAPI {
       _movieList = MovieList.fromJson(jsonDecode(response.body));
     }
     return _movieList;
+  }
+
+  void sortMoviesByVoteCount(List<Movie> originalList, String orderBy) {
+    if (orderBy == 'asc') {
+      originalList.sort((a, b) => a.voteCount.compareTo(b.voteCount));
+    } else {
+      originalList.sort((a, b) => b.voteCount.compareTo(a.voteCount));
+    }
   }
 }

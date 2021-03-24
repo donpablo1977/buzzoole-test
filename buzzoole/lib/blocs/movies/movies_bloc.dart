@@ -74,6 +74,13 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
       } catch (e) {
         yield FailedState();
       }
+    } else if (event is SortingEvent) {
+      try {
+        movieRepository.sortMoviesByVoteCount(event.movies, event.orderBy);
+        yield SortedState();
+      } catch (e) {
+        yield FailedState();
+      }
     }
   }
 }

@@ -22,6 +22,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
   int _page;
   List<Movie> _movies;
   double _currentPixel;
+  String _orderBy;
 
   @override
   void dispose() {
@@ -36,6 +37,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
     _movies = [];
     _page = 1;
     _currentPixel = 0;
+    _orderBy = 'desc';
     context.read<MoviesBloc>().add(TopRatedFetchingEvent(_page));
   }
 
@@ -53,6 +55,17 @@ class _MovieListScreenState extends State<MovieListScreen> {
                 BuzzooleColors().buzzooleMainColor),
           )),
       drawer: BuzzooleDrawer(),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.sort),
+        onPressed: () {
+          if (_orderBy == 'asc') {
+            _orderBy = 'desc';
+          } else {
+            _orderBy = 'asc';
+          }
+          context.read<MoviesBloc>().add(SortingEvent(_movies, _orderBy));
+        },
+      ),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -62,6 +75,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
               for (var movie in state.movies) {
                 _movies.add(movie);
               }
+
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (_currentPixel > 0) {
                   _scrollController.jumpTo(
@@ -80,7 +94,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
               return Center(
                 child: BuzzooleLoader(),
               );
-            } else if (state is TopRatedFetchedState) {
+            } else if (state is TopRatedFetchedState || state is SortedState) {
               return NotificationListener<ScrollNotification>(
                 onNotification: (scrollNotification) {
                   if (scrollNotification is ScrollEndNotification) {
@@ -91,13 +105,6 @@ class _MovieListScreenState extends State<MovieListScreen> {
                           .read<MoviesBloc>()
                           .add(TopRatedFetchingEvent(_page));
                       _currentPixel = scrollNotification.metrics.pixels;
-                    } else if (_scrollController.offset <= 0) {
-                      if (_page > 1) {
-                        _page = _page - 1;
-                        context
-                            .read<MoviesBloc>()
-                            .add(TopRatedFetchingEvent(_page));
-                      }
                     }
                     return true;
                   }

@@ -85,7 +85,6 @@ class _SearchScreenState extends State<SearchScreen> {
                           curve: Curves.fastOutSlowIn);
                     }
                   });
-                  print(_movies.length);
                 }
               },
               builder: (context, state) {
@@ -101,13 +100,6 @@ class _SearchScreenState extends State<SearchScreen> {
                               .read<MoviesBloc>()
                               .add(SearchingEvent(_term, _page));
                           _currentPixel = notification.metrics.pixels;
-                        } else if (_scrollController.offset <= 0) {
-                          if (_page > 1) {
-                            _page = _page - 1;
-                            context
-                                .read<MoviesBloc>()
-                                .add(SearchingEvent(_term, _page));
-                          }
                         }
                         return true;
                       }

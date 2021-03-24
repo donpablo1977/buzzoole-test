@@ -27,6 +27,12 @@ class SearchingEvent extends MoviesEvent {
   SearchingEvent(this.term, this.page);
 }
 
+class SortingEvent extends MoviesEvent {
+  final List<Movie> movies;
+  final String orderBy;
+  SortingEvent(this.movies, this.orderBy);
+}
+
 class FetchedEvent extends MoviesEvent {}
 
 class FailedEvent extends MoviesEvent {}
