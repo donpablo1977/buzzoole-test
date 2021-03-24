@@ -1,6 +1,7 @@
 import 'package:buzzoole/blocs/account/account_bloc.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_drawer.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_loader.dart';
+import 'package:buzzoole/presentation/widgets/custom_error_widget.dart';
 import 'package:buzzoole/presentation/widgets/watchlisted_card.dart';
 import 'package:buzzoole/utils/colors.dart';
 import 'package:buzzoole/utils/size_engine.dart';
@@ -65,6 +66,20 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                       child: WatchlistedCard(
                           movie: state.movieList.results[index]));
                 });
+          } else if (state is FailedState) {
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: CustomErrorWidget(
+                  title: 'OPS!',
+                  description: 'YOU NOT HAVE ANY MOVIE IN WATCHLIST',
+                  titleTextStyle: BuzzooleTextStyles().setBlackStyle(
+                      BuzzooleSizingEngine().setMaximumFontSize(context),
+                      BuzzooleColors().buzzooleMainColor),
+                  descriptionTextStyle: BuzzooleTextStyles().setBlackStyle(
+                      BuzzooleSizingEngine().setMinimumFontSize(context),
+                      BuzzooleColors().buzzooleDarkGreyColor)),
+            );
           }
           return Center(child: BuzzooleLoader());
         },

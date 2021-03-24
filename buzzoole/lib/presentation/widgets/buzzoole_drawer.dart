@@ -1,6 +1,5 @@
-import 'package:buzzoole/utils/colors.dart';
+import 'package:buzzoole/presentation/widgets/drawer_menu_item.dart';
 import 'package:buzzoole/utils/size_engine.dart';
-import 'package:buzzoole/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class BuzzooleDrawer extends StatelessWidget {
@@ -9,78 +8,27 @@ class BuzzooleDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Container(
-        color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: MediaQuery.of(context).size.height / 6),
-            Image.asset('assets/images/logo.png',
-                width: BuzzooleSizingEngine().setThumbImageSize(context),
-                height: BuzzooleSizingEngine().setThumbImageSize(context)),
-            InkWell(
-              onTap: () {
-                Navigator.of(context).pushNamed('/search');
-              },
-              splashColor: BuzzooleColors().buzzooleSplashColor,
-              highlightColor: BuzzooleColors().buzzooleHighlightColor,
-              child: Container(
-                alignment: Alignment.centerLeft,
-                margin: EdgeInsets.only(
-                    left: BuzzooleSizingEngine().setDefaultSpace(context)),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 10,
-                child: Text(
-                  'SEARCH A MOVIE',
-                  style: BuzzooleTextStyles().setBlackStyle(
-                      BuzzooleSizingEngine().setDefaultFontSize(context),
-                      BuzzooleColors().buzzooleMainColor),
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.of(context).pushNamed('/movie_list');
-              },
-              splashColor: BuzzooleColors().buzzooleSplashColor,
-              highlightColor: BuzzooleColors().buzzooleHighlightColor,
-              child: Container(
-                alignment: Alignment.centerLeft,
-                margin: EdgeInsets.only(
-                    left: BuzzooleSizingEngine().setDefaultSpace(context)),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 10,
-                child: Text(
-                  'MOVIE LIST',
-                  style: BuzzooleTextStyles().setBlackStyle(
-                      BuzzooleSizingEngine().setDefaultFontSize(context),
-                      BuzzooleColors().buzzooleMainColor),
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.of(context).pushNamed('/watchlist');
-              },
-              splashColor: BuzzooleColors().buzzooleSplashColor,
-              highlightColor: BuzzooleColors().buzzooleHighlightColor,
-              child: Container(
-                alignment: Alignment.centerLeft,
-                margin: EdgeInsets.only(
-                    left: BuzzooleSizingEngine().setDefaultSpace(context)),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 10,
-                child: Text(
-                  'WATCHLIST',
-                  style: BuzzooleTextStyles().setBlackStyle(
-                      BuzzooleSizingEngine().setDefaultFontSize(context),
-                      BuzzooleColors().buzzooleMainColor),
-                ),
-              ),
-            )
-          ],
-        ),
+      child: Column(
+        children: [
+          SizedBox(height: BuzzooleSizingEngine().setMaximumSpace(context)),
+          Image.asset('assets/images/transparent_logo.png',
+              width: BuzzooleSizingEngine().setThumbImageSize(context),
+              height: BuzzooleSizingEngine().setThumbImageSize(context)),
+          SizedBox(height: BuzzooleSizingEngine().setMaximumSpace(context)),
+          DrawerMenuItem(
+              icon: Icon(Icons.search),
+              title: 'SEARCH FOR A MOVIE',
+              route: '/search'),
+          DrawerMenuItem(
+              icon: Icon(Icons.list),
+              title: 'MOVIE LIST',
+              route: '/movie_list'),
+          DrawerMenuItem(
+              icon: Icon(Icons.favorite),
+              title: 'WATCHLIST',
+              route: '/watchlist'),
+          DrawerMenuItem(icon: Icon(Icons.logout), title: 'GOODBYE', route: '/')
+        ],
       ),
     );
   }
