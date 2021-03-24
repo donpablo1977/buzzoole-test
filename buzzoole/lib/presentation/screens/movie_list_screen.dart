@@ -2,7 +2,6 @@ import 'package:buzzoole/blocs/movies/movies_bloc.dart';
 import 'package:buzzoole/data/models/movie.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_drawer.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_loader.dart';
-import 'package:buzzoole/presentation/widgets/index_indicator.dart';
 import 'package:buzzoole/presentation/widgets/movie_card.dart';
 import 'package:buzzoole/utils/colors.dart';
 import 'package:buzzoole/utils/size_engine.dart';
@@ -47,7 +46,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
           backgroundColor: Colors.white,
-          elevation: 0,
+          elevation: 20,
           title: Text(
             'MOVIE LIST',
             style: BuzzooleTextStyles().setBlackStyle(
@@ -82,7 +81,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
                       _scrollController.position.pixels + _currentPixel);
                   _scrollController.animateTo(
                       _scrollController.position.pixels +
-                          MediaQuery.of(context).size.height / 6,
+                          MediaQuery.of(context).size.height / 4,
                       duration: Duration(milliseconds: 1000),
                       curve: Curves.fastOutSlowIn);
                 }
@@ -110,22 +109,26 @@ class _MovieListScreenState extends State<MovieListScreen> {
                   }
                   return false;
                 },
-                child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: _movies.length,
-                    itemBuilder: (context, index) {
-                      return Row(
-                        children: [
-                          IndexIndicator(index: index + 1),
-                          InkWell(
-                              onTap: () {
-                                Navigator.of(context).pushNamed('/movie_detail',
-                                    arguments: {'id': _movies[index].id});
-                              },
-                              child: MovieCard(movie: _movies[index])),
-                        ],
-                      );
-                    }),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          mainAxisExtent:
+                              MediaQuery.of(context).size.height / 5,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10),
+                      controller: _scrollController,
+                      itemCount: _movies.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                            onTap: () {
+                              Navigator.of(context).pushNamed('/movie_detail',
+                                  arguments: {'id': _movies[index].id});
+                            },
+                            child: MovieCard(movie: _movies[index]));
+                      }),
+                ),
               );
             }
             return Center(child: BuzzooleLoader());

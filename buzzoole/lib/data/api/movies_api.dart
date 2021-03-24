@@ -15,6 +15,8 @@ class MovieAPI {
     if (response.statusCode == 200) {
       _movieList = MovieList.fromJson(jsonDecode(response.body));
     }
+    sortMoviesByVoteCount(_movieList.results, 'desc');
+
     return _movieList;
   }
 

@@ -22,6 +22,10 @@ class BuzzooleSizingEngine {
     return MediaQuery.of(context).size.width / 15;
   }
 
+  double setSmallFontSize(BuildContext context) {
+    return MediaQuery.of(context).size.width / 40;
+  }
+
   double setMinimumFontSize(BuildContext context) {
     return MediaQuery.of(context).size.width / 30;
   }
