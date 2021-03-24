@@ -30,7 +30,6 @@ class BuzzooleStrings {
 
   String getRandomQuote() {
     int randomNumber = 0 + Random().nextInt(quotes.length - 0);
-    print(randomNumber);
     return quotes[randomNumber];
   }
 }

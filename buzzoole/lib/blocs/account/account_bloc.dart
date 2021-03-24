@@ -34,9 +34,9 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
         MovieList _movieList =
             await accountRepository.getAllWatchlistedMovies();
         BuzzooleUtils().setWatchlistInSharedPreferences(_movieList);
-        if (_movieList != null) {
+        if (_movieList != null && _movieList.results.length > 0) {
           yield WatchlistFetchedState(_movieList);
-        } else {
+        } else if (_movieList != null && _movieList.results.length == 0) {
           yield FailedState();
         }
       } catch (e) {

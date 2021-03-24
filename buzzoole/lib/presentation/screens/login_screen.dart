@@ -1,6 +1,5 @@
 import 'package:buzzoole/blocs/login/login_bloc.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_loader.dart';
-import 'package:buzzoole/presentation/widgets/custom_error_widget.dart';
 import 'package:buzzoole/utils/colors.dart';
 import 'package:buzzoole/utils/size_engine.dart';
 import 'package:buzzoole/utils/text_styles.dart';

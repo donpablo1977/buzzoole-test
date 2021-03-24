@@ -57,7 +57,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
       drawer: BuzzooleDrawer(),
       floatingActionButton: BlocConsumer<MoviesBloc, MoviesState>(
         builder: (context, state) {
-          if (state is TopRatedFetchedState) {
+          if (state is TopRatedFetchedState || state is SortedState) {
             return FloatingActionButton(
               child: Icon(Icons.sort),
               onPressed: () {
