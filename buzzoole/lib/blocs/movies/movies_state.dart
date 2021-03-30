@@ -13,6 +13,24 @@ class TopRatedFetchedState extends MoviesState {
   TopRatedFetchedState(this.movies);
 }
 
+class FavouritesFetchedState extends MoviesState {
+  final List<Movie> favourites;
+  FavouritesFetchedState(this.favourites);
+}
+
+class FavouriteCheckedState extends MoviesState {
+  final bool favourited;
+  FavouriteCheckedState(this.favourited);
+}
+
+class FavouriteAddedState extends MoviesState {
+  FavouriteAddedState();
+}
+
+class FavouriteRemovedState extends MoviesState {
+  FavouriteRemovedState();
+}
+
 class DetailFetchedState extends MoviesState {
   final MovieDetail movieDetail;
   final MovieImages movieImages;

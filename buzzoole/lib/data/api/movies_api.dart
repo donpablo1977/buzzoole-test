@@ -1,11 +1,14 @@
 import 'dart:convert';
 
+import 'package:buzzoole/data/models/favourite.dart';
 import 'package:buzzoole/data/models/movie.dart';
 import 'package:buzzoole/data/models/movie_detail.dart';
 import 'package:buzzoole/data/models/movie_images.dart';
 import 'package:buzzoole/data/models/movie_list.dart';
 import 'package:buzzoole/utils/strings.dart';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 class MovieAPI {
   Future<MovieList> fetchPopularMovies(int page) async {
@@ -61,6 +64,73 @@ class MovieAPI {
       originalList.sort((a, b) => a.voteCount.compareTo(b.voteCount));
     } else {
       originalList.sort((a, b) => b.voteCount.compareTo(a.voteCount));
+    }
+  }
+
+  Future<List<Movie>> fetchFavouritesFromLocalDatabase() async {
+    try {
+      Database buzzooleDatabase =
+          await openDatabase(join(await getDatabasesPath(), 'buzzoole.db'));
+      final List<Map<String, dynamic>> favourites =
+          await buzzooleDatabase.query('favourites');
+      List<Movie> favouriteMovies = [];
+      for (var favourite in favourites) {
+        Movie movie = Movie(
+            title: favourite['title'],
+            id: favourite['id'],
+            posterPath: favourite['imagePath']);
+        favouriteMovies.add(movie);
+      }
+      return favouriteMovies;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<bool> checkFavouriteFromLocalDatabase(int id) async {
+    try {
+      Database buzzooleDatabase =
+          await openDatabase(join(await getDatabasesPath(), 'buzzoole.db'));
+      final List<Map<String, dynamic>> favourites =
+          await buzzooleDatabase.query('favourites');
+      List<Movie> favouriteMovies = [];
+      for (var favourite in favourites) {
+        Movie movie = Movie(
+            title: favourite['title'],
+            id: favourite['id'],
+            posterPath: favourite['imagePath']);
+        favouriteMovies.add(movie);
+      }
+      for (var movie in favouriteMovies) {
+        if (movie.id == id) {
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<void> addFavouriteIntoLocalDatabase(Favourite favourite) async {
+    try {
+      Database buzzooleDatabase =
+          await openDatabase(join(await getDatabasesPath(), 'buzzoole.db'));
+      await buzzooleDatabase.insert('favourites', favourite.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> removeFavouriteFromLocalDatabase(int id) async {
+    try {
+      Database buzzooleDatabase =
+          await openDatabase(join(await getDatabasesPath(), 'buzzoole.db'));
+      await buzzooleDatabase
+          .delete('favourites', where: 'id = ?', whereArgs: [id]);
+    } catch (e) {
+      print(e.toString());
     }
   }
 }

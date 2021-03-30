@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:buzzoole/data/models/favourite.dart';
 import 'package:buzzoole/data/models/movie.dart';
 import 'package:buzzoole/data/models/movie_detail.dart';
 import 'package:buzzoole/data/models/movie_images.dart';
@@ -82,6 +83,46 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
       } catch (e) {
         yield FailedState();
       }
+    } else if (event is FavouritesFetchingEvent) {
+      yield FetchingState();
+      try {
+        List<Movie> _favourites =
+            await movieRepository.fetchFavouritesFromLocalDatabase();
+        if (_favourites.isEmpty) {
+          yield EmptyState();
+        } else if (_favourites == null) {
+          yield FailedState();
+        } else {
+          yield FavouritesFetchedState(_favourites);
+        }
+      } catch (e) {
+        yield FailedState();
+      }
+    } else if (event is FavouriteAddingEvent) {
+      yield FetchingState();
+      try {
+        await movieRepository.addFavouriteIntoLocalDatabase(event.favourite);
+        yield FavouriteAddedState();
+      } catch (e) {
+        yield FailedState();
+      }
+    } else if (event is FavouriteRemovingEvent) {
+      yield FetchingState();
+      try {
+        await movieRepository.removeFavouriteFromLocalDatabase(event.id);
+        yield FavouriteRemovedState();
+      } catch (e) {
+        yield FailedState();
+      }
+    } else if (event is FavouriteCheckingEvent) {
+      yield FetchingState();
+      try {
+        bool favourited =
+            await movieRepository.checkFavouriteFromLocalDatabase(event.id);
+        if (favourited != null) {
+          yield FavouriteCheckedState(favourited);
+        }
+      } catch (e) {}
     }
   }
 }

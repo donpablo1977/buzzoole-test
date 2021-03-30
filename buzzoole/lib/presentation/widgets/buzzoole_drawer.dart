@@ -24,9 +24,11 @@ class BuzzooleDrawer extends StatelessWidget {
               title: 'MOVIE LIST',
               route: '/movie_list'),
           DrawerMenuItem(
+              icon: Icon(Icons.watch), title: 'WATCHLIST', route: '/watchlist'),
+          DrawerMenuItem(
               icon: Icon(Icons.favorite),
-              title: 'WATCHLIST',
-              route: '/watchlist'),
+              title: 'FAVOURITES',
+              route: '/favourite'),
           DrawerMenuItem(icon: Icon(Icons.logout), title: 'GOODBYE', route: '/')
         ],
       ),

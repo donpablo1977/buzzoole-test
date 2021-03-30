@@ -20,15 +20,15 @@ class AccountAPI {
     return _account;
   }
 
-  Future<void> toggleMovieInWatchList(int movieId, bool toggle) async {
+  Future<bool> toggleMovieInWatchList(int movieId, bool toggle) async {
     SharedPreferences _preferences =
         await BuzzooleUtils().getSharedPreferences();
-    final response = await http.post(
+    await http.post(
         '${BuzzooleStrings().baseURL}/account/${_preferences.getInt('accountId')}/watchlist?api_key=${BuzzooleStrings().apiKey}&session_id=${_preferences.getString('sessionId')}',
         headers: {'Content-Type': 'application/json;charset=utf-8'},
         body: jsonEncode(
             {'media_type': 'movie', 'media_id': movieId, 'watchlist': toggle}));
-    if (response.statusCode == 200) {}
+    return toggle;
   }
 
   Future<MovieList> getAllWatchlistedMovies() async {

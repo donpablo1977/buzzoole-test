@@ -4,6 +4,7 @@ import 'package:buzzoole/blocs/movies/movies_bloc.dart';
 import 'package:buzzoole/data/repositories/account_repository.dart';
 import 'package:buzzoole/data/repositories/login_repository.dart';
 import 'package:buzzoole/data/repositories/movies_repository.dart';
+import 'package:buzzoole/presentation/screens/favourites_screen.dart';
 import 'package:buzzoole/presentation/screens/login_screen.dart';
 import 'package:buzzoole/presentation/screens/movie_detail_screen.dart';
 import 'package:buzzoole/presentation/screens/movie_list_screen.dart';
@@ -61,6 +62,15 @@ class BuzzooleRouter {
           return BlocProvider<MoviesBloc>(
             create: (context) => MoviesBloc(_repo),
             child: SearchScreen(),
+          );
+        });
+        break;
+      case '/favourite':
+        return MaterialPageRoute(builder: (context) {
+          MovieRepository _repo = MovieRepository();
+          return BlocProvider<MoviesBloc>(
+            create: (context) => MoviesBloc(_repo),
+            child: FavouritesScreen(),
           );
         });
         break;

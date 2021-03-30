@@ -1,5 +1,6 @@
 import 'package:buzzoole/blocs/account/account_bloc.dart' as account;
 import 'package:buzzoole/blocs/movies/movies_bloc.dart';
+import 'package:buzzoole/data/models/favourite.dart';
 import 'package:buzzoole/data/models/movie_detail.dart';
 import 'package:buzzoole/data/models/movie_images.dart';
 import 'package:buzzoole/presentation/widgets/buzzoole_loader.dart';
@@ -8,7 +9,6 @@ import 'package:buzzoole/utils/colors.dart';
 import 'package:buzzoole/utils/size_engine.dart';
 import 'package:buzzoole/utils/strings.dart';
 import 'package:buzzoole/utils/text_styles.dart';
-import 'package:favorite_button/favorite_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
@@ -23,8 +23,11 @@ class MovieDetailScreen extends StatefulWidget {
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
   double rating = 0;
+  bool watchlistToggle;
   MovieDetail _detail;
   MovieImages _images;
+  Color watchlistIconColor;
+  Color favouriteIconColor;
 
   @override
   void initState() {
@@ -36,8 +39,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<MoviesBloc, MoviesState>(
-      listener: (context, state) {},
-      builder: (context, state) {
+      listener: (context, state) {
         if (state is DetailFetchedState) {
           _detail = state.movieDetail;
           _images = state.movieImages;
@@ -45,10 +47,29 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               .read<MoviesBloc>()
               .add(MovieCheckingEvent(state.movieDetail.id));
         }
+      },
+      builder: (context, state) {
         return BlocConsumer<MoviesBloc, MoviesState>(
-          listener: (context, state) {},
-          builder: (context, state) {
+          listener: (context, state) {
             if (state is MovieCheckedState) {
+              watchlistIconColor = state.watchListed
+                  ? BuzzooleColors().buzzooleMainColor
+                  : BuzzooleColors().buzzooleLightGreyColor;
+              context
+                  .read<MoviesBloc>()
+                  .add(FavouriteCheckingEvent(_detail.id));
+            } else if (state is FavouriteCheckedState) {
+              if (state.favourited) {
+                favouriteIconColor = BuzzooleColors().buzzooleMainColor;
+              } else {
+                favouriteIconColor = BuzzooleColors().buzzooleLightGreyColor;
+              }
+            }
+          },
+          builder: (context, state) {
+            if (state is FavouriteCheckedState ||
+                state is FavouriteRemovedState ||
+                state is FavouriteAddedState) {
               return Scaffold(
                 backgroundColor: Colors.white,
                 appBar: AppBar(
@@ -222,46 +243,107 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       ),
                       Positioned(
                         bottom: 50,
-                        left: MediaQuery.of(context).size.width / 2 -
-                            MediaQuery.of(context).size.width / 20,
                         child: Container(
-                            width: MediaQuery.of(context).size.width / 10,
-                            height: MediaQuery.of(context).size.width / 10,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                      offset: Offset(0, 5),
-                                      blurRadius: 10,
-                                      color: Colors.black.withAlpha(15))
-                                ],
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(100))),
-                            child: FavoriteButton(
-                              iconSize: BuzzooleSizingEngine()
-                                      .setDefaultSpace(context) /
-                                  2,
-                              isFavorite: state.watchListed,
-                              iconColor: BuzzooleColors().buzzooleMainColor,
-                              valueChanged: (_isWatchlisted) async {
-                                if (state.watchListed) {
-                                  BlocProvider.of<account.AccountBloc>(context)
-                                      .add(account.WatchlistToggleEvent(
-                                          _detail.id, false));
-                                } else {
-                                  BlocProvider.of<account.AccountBloc>(context)
-                                      .add(account.WatchlistToggleEvent(
-                                          _detail.id, true));
-                                }
-                              },
-                            )),
+                          width: MediaQuery.of(context).size.width,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width / 10,
+                                height: MediaQuery.of(context).size.width / 10,
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(100)),
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          offset: Offset(0, 10),
+                                          color: Colors.black.withAlpha(30),
+                                          blurRadius: 10)
+                                    ]),
+                                child: IconButton(
+                                    splashColor:
+                                        BuzzooleColors().buzzooleSplashColor,
+                                    highlightColor:
+                                        BuzzooleColors().buzzooleHighlightColor,
+                                    icon: Icon(Icons.favorite,
+                                        color: favouriteIconColor),
+                                    onPressed: () {
+                                      setState(() {
+                                        if (favouriteIconColor ==
+                                            BuzzooleColors()
+                                                .buzzooleMainColor) {
+                                          favouriteIconColor = BuzzooleColors()
+                                              .buzzooleLightGreyColor;
+                                          BlocProvider.of<MoviesBloc>(context)
+                                              .add(FavouriteRemovingEvent(
+                                                  _detail.id));
+                                        } else {
+                                          favouriteIconColor = BuzzooleColors()
+                                              .buzzooleMainColor;
+                                          BlocProvider.of<MoviesBloc>(context)
+                                              .add(FavouriteAddingEvent(
+                                                  Favourite(
+                                                      id: _detail.id,
+                                                      title: _detail.title,
+                                                      imagePath:
+                                                          _detail.posterPath)));
+                                        }
+                                      });
+                                    }),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width / 10,
+                                height: MediaQuery.of(context).size.width / 10,
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(100)),
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          offset: Offset(0, 10),
+                                          color: Colors.black.withAlpha(30),
+                                          blurRadius: 10)
+                                    ]),
+                                child: IconButton(
+                                  splashColor:
+                                      BuzzooleColors().buzzooleSplashColor,
+                                  highlightColor:
+                                      BuzzooleColors().buzzooleHighlightColor,
+                                  icon: Icon(
+                                    Icons.watch,
+                                    color: watchlistIconColor,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      if (watchlistIconColor ==
+                                          BuzzooleColors().buzzooleMainColor) {
+                                        watchlistIconColor = BuzzooleColors()
+                                            .buzzooleLightGreyColor;
+                                        BlocProvider.of<account.AccountBloc>(
+                                                context)
+                                            .add(account.WatchlistToggleEvent(
+                                                _detail.id, false));
+                                      } else {
+                                        watchlistIconColor =
+                                            BuzzooleColors().buzzooleMainColor;
+                                        BlocProvider.of<account.AccountBloc>(
+                                                context)
+                                            .add(account.WatchlistToggleEvent(
+                                                _detail.id, true));
+                                      }
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       )
                     ],
                   ),
                 ),
               );
-            } else if (state is account.WatchlistToggleEvent) {
-              return Container();
             } else if (state is FailedState) {
               return Scaffold(
                 backgroundColor: Colors.white,

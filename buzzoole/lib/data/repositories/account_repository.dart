@@ -9,7 +9,7 @@ class AccountRepository {
     return _accountAPI.fetchAccountDetails();
   }
 
-  Future<void> toggleMovieInWatchList(int movieId, bool toggle) async {
+  Future<bool> toggleMovieInWatchList(int movieId, bool toggle) async {
     return _accountAPI.toggleMovieInWatchList(movieId, toggle);
   }
 

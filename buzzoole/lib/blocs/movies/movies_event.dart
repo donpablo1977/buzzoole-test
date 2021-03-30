@@ -9,6 +9,33 @@ class TopRatedFetchingEvent extends MoviesEvent {
   TopRatedFetchingEvent(this.page);
 }
 
+class FavouritesFetchingEvent extends MoviesEvent {
+  FavouritesFetchingEvent();
+}
+
+class FavouriteAddingEvent extends MoviesEvent {
+  final Favourite favourite;
+  FavouriteAddingEvent(this.favourite);
+}
+
+class FavouriteRemovingEvent extends MoviesEvent {
+  final int id;
+  FavouriteRemovingEvent(this.id);
+}
+
+class FavouriteAddedEvent extends MoviesEvent {
+  FavouriteAddedEvent();
+}
+
+class FavouriteRemovedEvent extends MoviesEvent {
+  FavouriteRemovedEvent();
+}
+
+class FavouriteCheckingEvent extends MoviesEvent {
+  final int id;
+  FavouriteCheckingEvent(this.id);
+}
+
 class DetailFetchingEvent extends MoviesEvent {
   final int id;
 

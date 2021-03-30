@@ -43,10 +43,11 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
         yield FailedState();
       }
     } else if (event is WatchlistToggleEvent) {
-      yield WatchlistAddingState();
+      yield WatchlistTogglingState();
       try {
-        await accountRepository.toggleMovieInWatchList(
+        final response = await accountRepository.toggleMovieInWatchList(
             event.movieId, event.toggle);
+        yield WatchlistToggledState(response);
       } catch (e) {
         yield FailedState();
       }

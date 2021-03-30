@@ -17,8 +17,12 @@ class WatchlistFetchedState extends AccountState {
   WatchlistFetchedState(this.movieList);
 }
 
-class WatchlistAddingState extends AccountState {}
+class WatchlistTogglingState extends AccountState {}
 
-class WatchlistAddedState extends AccountState {}
+class WatchlistToggledState extends AccountState {
+  final bool watchlisted;
+
+  WatchlistToggledState(this.watchlisted);
+}
 
 class FailedState extends AccountState {}
