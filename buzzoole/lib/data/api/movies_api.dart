@@ -69,20 +69,26 @@ class MovieAPI {
 
   Future<List<Movie>> fetchFavouritesFromLocalDatabase() async {
     try {
-      Database buzzooleDatabase =
-          await openDatabase(join(await getDatabasesPath(), 'buzzoole.db'));
-      final List<Map<String, dynamic>> favourites =
-          await buzzooleDatabase.query('favourites');
-      List<Movie> favouriteMovies = [];
-      for (var favourite in favourites) {
-        Movie movie = Movie(
-            title: favourite['title'],
-            id: favourite['id'],
-            posterPath: favourite['imagePath']);
-        favouriteMovies.add(movie);
+      Database buzzooleDatabase = await openDatabase(
+          join(await getDatabasesPath(), 'buzzoole.db'),
+          version: 1, onCreate: (db, version) {
+        return db.execute(
+            "CREATE TABLE favourites(id INTEGER PRIMARY KEY, title TEXT, imagePath TEXT)");
+      });
+      if (await checkIfTableExists(buzzooleDatabase) > 0) {
+        final List<Map<String, dynamic>> favourites =
+            await buzzooleDatabase.query('favourites');
+        List<Movie> favouriteMovies = [];
+        for (var favourite in favourites) {
+          Movie movie = Movie(
+              title: favourite['title'],
+              id: favourite['id'],
+              posterPath: favourite['imagePath']);
+          favouriteMovies.add(movie);
+        }
+        buzzooleDatabase.close();
+        return favouriteMovies;
       }
-      buzzooleDatabase.close();
-      return favouriteMovies;
     } catch (e) {
       return null;
     }
@@ -92,23 +98,26 @@ class MovieAPI {
     try {
       Database buzzooleDatabase =
           await openDatabase(join(await getDatabasesPath(), 'buzzoole.db'));
-      final List<Map<String, dynamic>> favourites =
-          await buzzooleDatabase.query('favourites');
-      List<Movie> favouriteMovies = [];
-      for (var favourite in favourites) {
-        Movie movie = Movie(
-            title: favourite['title'],
-            id: favourite['id'],
-            posterPath: favourite['imagePath']);
-        favouriteMovies.add(movie);
-      }
-      for (var movie in favouriteMovies) {
-        if (movie.id == id) {
-          buzzooleDatabase.close();
-          return true;
+      if (await checkIfTableExists(buzzooleDatabase) > 0) {
+        final List<Map<String, dynamic>> favourites =
+            await buzzooleDatabase.query('favourites');
+        List<Movie> favouriteMovies = [];
+        for (var favourite in favourites) {
+          Movie movie = Movie(
+              title: favourite['title'],
+              id: favourite['id'],
+              posterPath: favourite['imagePath']);
+          favouriteMovies.add(movie);
         }
+        for (var movie in favouriteMovies) {
+          if (movie.id == id) {
+            buzzooleDatabase.close();
+            return true;
+          }
+        }
+        buzzooleDatabase.close();
       }
-      buzzooleDatabase.close();
+
       return false;
     } catch (e) {
       return null;
@@ -119,9 +128,11 @@ class MovieAPI {
     try {
       Database buzzooleDatabase =
           await openDatabase(join(await getDatabasesPath(), 'buzzoole.db'));
-      await buzzooleDatabase.insert('favourites', favourite.toJson(),
-          conflictAlgorithm: ConflictAlgorithm.replace);
-      buzzooleDatabase.close();
+      if (await checkIfTableExists(buzzooleDatabase) > 0) {
+        await buzzooleDatabase.insert('favourites', favourite.toJson(),
+            conflictAlgorithm: ConflictAlgorithm.replace);
+        buzzooleDatabase.close();
+      }
     } catch (e) {
       print(e.toString());
     }
@@ -131,11 +142,19 @@ class MovieAPI {
     try {
       Database buzzooleDatabase =
           await openDatabase(join(await getDatabasesPath(), 'buzzoole.db'));
-      await buzzooleDatabase
-          .delete('favourites', where: 'id = ?', whereArgs: [id]);
-      buzzooleDatabase.close();
+      if (await checkIfTableExists(buzzooleDatabase) > 0) {
+        await buzzooleDatabase
+            .delete('favourites', where: 'id = ?', whereArgs: [id]);
+        buzzooleDatabase.close();
+      }
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  Future<int> checkIfTableExists(Database db) async {
+    var tableExists = await db
+        .query('sqlite_master', where: 'name = ?', whereArgs: ['favourites']);
+    return tableExists.length;
   }
 }

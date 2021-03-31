@@ -315,24 +315,22 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                     color: watchlistIconColor,
                                   ),
                                   onPressed: () {
-                                    setState(() {
-                                      if (watchlistIconColor ==
-                                          BuzzooleColors().buzzooleMainColor) {
-                                        watchlistIconColor = BuzzooleColors()
-                                            .buzzooleLightGreyColor;
-                                        BlocProvider.of<account.AccountBloc>(
-                                                context)
-                                            .add(account.WatchlistToggleEvent(
-                                                _detail.id, false));
-                                      } else {
-                                        watchlistIconColor =
-                                            BuzzooleColors().buzzooleMainColor;
-                                        BlocProvider.of<account.AccountBloc>(
-                                                context)
-                                            .add(account.WatchlistToggleEvent(
-                                                _detail.id, true));
-                                      }
-                                    });
+                                    if (watchlistIconColor ==
+                                        BuzzooleColors().buzzooleMainColor) {
+                                      watchlistIconColor = BuzzooleColors()
+                                          .buzzooleLightGreyColor;
+                                      BlocProvider.of<account.AccountBloc>(
+                                              context)
+                                          .add(account.WatchlistToggleEvent(
+                                              _detail.id, false));
+                                    } else {
+                                      watchlistIconColor =
+                                          BuzzooleColors().buzzooleMainColor;
+                                      BlocProvider.of<account.AccountBloc>(
+                                              context)
+                                          .add(account.WatchlistToggleEvent(
+                                              _detail.id, true));
+                                    }
                                   },
                                 ),
                               ),
