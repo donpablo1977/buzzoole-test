@@ -81,6 +81,7 @@ class MovieAPI {
             posterPath: favourite['imagePath']);
         favouriteMovies.add(movie);
       }
+      buzzooleDatabase.close();
       return favouriteMovies;
     } catch (e) {
       return null;
@@ -103,9 +104,11 @@ class MovieAPI {
       }
       for (var movie in favouriteMovies) {
         if (movie.id == id) {
+          buzzooleDatabase.close();
           return true;
         }
       }
+      buzzooleDatabase.close();
       return false;
     } catch (e) {
       return null;
@@ -118,6 +121,7 @@ class MovieAPI {
           await openDatabase(join(await getDatabasesPath(), 'buzzoole.db'));
       await buzzooleDatabase.insert('favourites', favourite.toJson(),
           conflictAlgorithm: ConflictAlgorithm.replace);
+      buzzooleDatabase.close();
     } catch (e) {
       print(e.toString());
     }
@@ -129,6 +133,7 @@ class MovieAPI {
           await openDatabase(join(await getDatabasesPath(), 'buzzoole.db'));
       await buzzooleDatabase
           .delete('favourites', where: 'id = ?', whereArgs: [id]);
+      buzzooleDatabase.close();
     } catch (e) {
       print(e.toString());
     }
